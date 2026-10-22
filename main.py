@@ -4,6 +4,7 @@ from random import choice
 import requests
 import json
 import sys
+import subprocess
 
 # Load the server address from the configuration file
 with open("server.json", "r", encoding="utf-8") as file:
@@ -110,6 +111,12 @@ turn_label.pack(pady=2)
 
 def get_game():
     """Retrieve the latest game board from the server."""
+    def win_and_go_to_menu():
+            global win_popup
+            subprocess.Popen(
+                [sys.executable, "menu.py"]
+            )
+            win_popup.destroy()
 
     response = requests.get(
         f"{server}/game/{session_id}/board",
@@ -120,7 +127,7 @@ def get_game():
         win_popup = CTk()
         CTkLabel(win_popup,text=f"Winner : {winner}").place
         app.destroy()
-        CTkButton(win_popup,text="Ok",command=lambda:win_popup.destroy())
+        CTkButton(win_popup,text="Ok",command=lambda:win_and_go_to_menu)
         win_popup.mainloop()
 
         
