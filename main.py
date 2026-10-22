@@ -19,12 +19,13 @@ sign = "X" if player == 1 else "O"
 
 
 # Add sign to the button
-def add_sign(button):
-    print("Bouton cliqué")
+def add_sign(button, lines, rows):
+    game_table[lines][rows] = sign
     if button.cget("fg_color") == "white":
         button.configure(text=sign, fg_color=color_sign)
     else:
         print("Button already clicked")
+    
 
 
 
@@ -39,10 +40,10 @@ for lines in range(3):
             height=80,
             fg_color="white",
         )
-
-        button.configure(command=lambda b=button: add_sign(b))
+        buttons[lines][rows] = button
+        button.configure(command=lambda b=button, l=lines, r=rows: add_sign(b, l, r))
 
         button.place(x=10 + rows * 90, y=10 + lines * 90)
-        buttons[lines][rows] = button
+        
 # Run the application
 app.mainloop()
