@@ -116,7 +116,7 @@ def get_game():
         timeout=5
     )
     winner = response.json()["winner"]
-    if winner and not game_over:
+    if winner and game_over == False:
         game_over = True
         win_popup = CTkToplevel(app)
         win_popup.title("Game over")
