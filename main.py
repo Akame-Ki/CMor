@@ -141,8 +141,8 @@ def get_game():
 
     
 
-    winner = response.json()["winner"]
-    if winner and game_over == False:
+    end_game = response.json()["end_game"]
+    if end_game and game_over == False:
         game_over = True
         win_popup = CTkToplevel(app)
         win_popup.title("Game over")
@@ -150,7 +150,7 @@ def get_game():
         win_popup.resizable(False, False)
         CTkLabel(
             win_popup,
-            text=f"Winner: {winner}",
+            text=f"Résultat: {end_game}",
             font=("Arial", 18, "bold")
         ).pack(pady=20)
         def win_and_go_to_menu():
