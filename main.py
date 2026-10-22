@@ -15,8 +15,12 @@ server = config["server"].rstrip("/")
 # Configure the main application window
 app = CTk()
 app.title("CMor")
-app.geometry("300x350")
+app.geometry("300x390")
 app.resizable(False, False)
+
+
+player1_state_label = CTkLabel(app,text=f"Player 1 state : Not connected")
+player2_state_label = CTkLabel(app,text=f"Player 2 state : Not connected")
 
 # default gameover to false
 game_over = False
@@ -116,12 +120,27 @@ turn_label.pack(pady=2)
 
 
 def get_game():
-    global game_over
+    global game_over,player1_state_label,player2_state_label
     """Retrieve the latest game board from the server."""
     response = requests.get(
         f"{server}/game/{session_id}/board",
         timeout=5
     )
+    player1_state = response.json()["player1_stage"]
+    player2_state = response.json()["player2_stage"]
+    if(player1_state == 1):
+        player1_state = "Connected"
+    else:
+        player1_state = "Not connected"
+    if(player2_state == 1):
+        player2_state = "Connected"
+    else:
+        player2_state = "Not connected"
+    player1_state_label.configure(text=f"Player 1 state : {player1_state}")
+    player2_state_label.configure(text=f"Player 2 state : {player2_state}")
+
+    
+
     winner = response.json()["winner"]
     if winner and game_over == False:
         game_over = True
@@ -319,6 +338,8 @@ for row in range(3):
             y=105 + row * 75
         )
 
+player1_state_label.place(y=330)
+player2_state_label.place(y=360)
 
 # Retrieve the initial board and start automatic refreshing
 refresh_game()
