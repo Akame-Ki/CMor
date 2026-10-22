@@ -18,6 +18,9 @@ app.title("CMor")
 app.geometry("300x350")
 app.resizable(False, False)
 
+# default gameover to false
+game_over = False
+
 # Initialize the local game board and its buttons
 game_table = [[None for _ in range(3)] for _ in range(3)]
 buttons = [[None for _ in range(3)] for _ in range(3)]
@@ -110,6 +113,7 @@ turn_label.pack(pady=2)
 
 
 def get_game():
+    global game_over
     """Retrieve the latest game board from the server."""
     response = requests.get(
         f"{server}/game/{session_id}/board",
