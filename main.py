@@ -2,6 +2,7 @@ from customtkinter import *
 from random import choice
 import requests
 import json
+import sys
 
 # Load Window
 app = CTk()
@@ -19,16 +20,46 @@ game_table = [[None for _ in range(3)] for _ in range(3)]
 buttons = [[None for _ in range(3)] for _ in range(3)]
 
 
-# Load player ID
-player1 = choice([1, 2])
-player2 = 2 if player1 == 1 else 1
-host_player = player1  # Player 1 starts
-response = requests.post(
-    f"{server}/game/start",
-    json={"player_id": host_player}
+# Initialize the game session
+if len(sys.argv) > 1:
+    # Join an existing game using the ID entered in the menu
+    session_id = sys.argv[1].strip()
+
+    # The server assigns the remaining player ID
+    response = requests.post(
+        f"{server}/game/{session_id}/join",
+        json={},
+        timeout=5
     )
+
+else:
+    # Randomly select the host player's ID
+    host_player = choice([1, 2])
+
+    # Create a new game and request a session ID
+    response = requests.post(
+        f"{server}/game/start",
+        json={"player_id": host_player},
+        timeout=5
+    )
+
+response.raise_for_status()
 response = response.json()
-session_id = response["session_id"]
+
+if len(sys.argv) == 1:
+    # Retrieve the session ID created by the server
+    session_id = response["session_id"]
+else:
+    # Retrieve the player ID assigned by the server
+    host_player = response["player_id"]
+
+# Load player ID
+
+# Define the other player's ID
+player1 = host_player
+player2 = 2 if host_player == 1 else 1
+
+
 
 # Request the session_id and send the host player id 
 response = requests.post(
