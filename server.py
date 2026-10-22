@@ -20,6 +20,11 @@ class TableData(BaseModel):
 class PlayerData(BaseModel):
     player_id: int
 
+class MoveData(BaseModel):
+    player_id: int
+    table: list[list[str | None]]
+
+
 
 @app.get("/")
 async def root():
@@ -48,6 +53,7 @@ async def start_game(data: PlayerData):
         "player1": data.player_id,
         "player2": None,
         "board": [[None for _ in range(3)] for _ in range(3)],
+        "end_game": None
     }
 
     print(
@@ -101,6 +107,30 @@ async def join_game(session_id: str):
     }
 
 
+def check_winner(board):
+
+    # Check rows for a winner
+    for row in board:
+        if row[0] is not None and row[0] == row[1] == row[2]:
+            return row[0]
+
+    # Check columns for a winner
+    for col in range(3):
+        if board[0][col] is not None and board[0][col] == board[1][col] == board[2][col]:
+            return board[0][col]
+
+    # Check diagonals for a winner
+    if board[0][0] is not None and board[0][0] == board[1][1] == board[2][2]:
+        return board[0][0]
+    if board[0][2] is not None and board[0][2] == board[1][1] == board[2][0]:
+        return board[0][2]
+
+
+    # No winner found
+    return None
+    
+
+
 # Update the board for a specific game session
 @app.post("/game/{session_id}/board")
 async def update_board(session_id: str, data: TableData):
@@ -126,9 +156,24 @@ async def update_board(session_id: str, data: TableData):
     # Store the updated board
     game["board"] = data.table
 
+    if winner := check_winner(data.table):
+        game["end_game"] = winner
+        print(f"Game session {session_id} has a winner: Player {winner}")
+        return {
+            "table": game["board"],
+            "end_game": winner
+        }
+    elif not any(cell is None for row in data.table for cell in row) and not winner:
+        game["end_game"] = "Draw"
+        print(f"Game session {session_id} ended in a draw.")
+        return {
+            "table": game["board"],
+            "end_game": "Draw"
+        }
+
     return {
         "message": "Board updated",
-        "table": game["board"]
+        "table": game["board"],
     }
 
 
@@ -148,5 +193,10 @@ async def get_board(session_id: str):
     # Return the current board
     return {
         "session_id": session_id,
-        "table": game["board"]
+        "table": game["board"],
+        "end_game": game["end_game"],
+        "player1_stage": game["player1"],
+        "player2_stage": game["player2"]
     }
+
+
