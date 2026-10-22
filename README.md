@@ -1,5 +1,5 @@
  # CMor
-CMor is a 12h Devathon Project we build for fun, is a Morpion in Python with a management server. 
+CMor is a 9h Devathon Project we build for fun, is a Morpion in Python with a management server. 
 
 > [!WARNING]
 > It will not be updated
