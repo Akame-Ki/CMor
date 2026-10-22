@@ -28,6 +28,9 @@ joining_game = len(sys.argv) > 1
 try:
     if joining_game:
         # Retrieve the session ID passed by the menu
+        if len(sys.argv) < 5:
+            print("code must be provided with6 charcters")
+
         session_id = sys.argv[1].strip()
 
         # Ask the server to assign the remaining player ID
