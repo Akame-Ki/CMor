@@ -6,6 +6,11 @@ app.title("CMor")
 app.geometry("300x300")
 
 
+game_table = [[None for _ in range(3)] for _ in range(3)]
+# Setup buttons table
+buttons = [[None for _ in range(3)] for _ in range(3)]
+
+
 # Load player ID
 player = choice([2, 1])
 color_sign = "red" if player == 1 else "blue"
@@ -21,8 +26,8 @@ def add_sign(button):
     else:
         print("Button already clicked")
 
-# Setup buttons table
-buttons = [[None for _ in range(3)] for _ in range(3)]
+
+
 # Create buttons
 for lines in range(3):
     for rows in range(3):
