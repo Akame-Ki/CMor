@@ -52,7 +52,7 @@ def join_a_game():
         """Launch the game using the entered game ID."""
 
         # Retrieve and validate the entered game ID
-        game_id = game_id_entry.get().strip()
+        game_id = game_id_entry.get().upper().strip()
 
         if not game_id:
             CTkLabel(
