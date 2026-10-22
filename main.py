@@ -111,24 +111,34 @@ turn_label.pack(pady=2)
 
 def get_game():
     """Retrieve the latest game board from the server."""
-    def win_and_go_to_menu():
-            global win_popup
-            subprocess.Popen(
-                [sys.executable, "menu.py"]
-            )
-            win_popup.destroy()
-
     response = requests.get(
         f"{server}/game/{session_id}/board",
         timeout=5
     )
     winner = response.json()["winner"]
-    if(winner):
-        win_popup = CTk()
-        CTkLabel(win_popup,text=f"Winner : {winner}").place
-        app.destroy()
-        CTkButton(win_popup,text="Ok",command=lambda:win_and_go_to_menu)
-        win_popup.mainloop()
+    if winner and not game_over:
+        game_over = True
+        win_popup = CTkToplevel(app)
+        win_popup.title("Game over")
+        win_popup.geometry("250x150")
+        win_popup.resizable(False, False)
+        CTkLabel(
+            win_popup,
+            text=f"Winner: {winner}",
+            font=("Arial", 18, "bold")
+        ).pack(pady=20)
+        def win_and_go_to_menu():
+            win_popup.destroy()
+            app.destroy()
+            subprocess.Popen([sys.executable, "menu.py"])
+        CTkButton(
+            win_popup,
+            text="OK",
+            command=win_and_go_to_menu
+        ).pack(pady=5)
+        win_popup.protocol("WM_DELETE_WINDOW", win_and_go_to_menu)
+        win_popup.transient(app)
+        win_popup.grab_set()
 
         
 
