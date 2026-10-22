@@ -1,5 +1,5 @@
-from Ctk import *
+from customtkinter import *
 
-App = Ctk()
+app = CTk()
 
 app.mainloop()
