@@ -115,6 +115,16 @@ def get_game():
         f"{server}/game/{session_id}/board",
         timeout=5
     )
+    winner = response.json()["winner"]
+    if(winner):
+        win_popup = CTk()
+        CTkLabel(win_popup,text=f"Winner : {winner}").place
+        app.destroy()
+        CTkButton(win_popup,text="Ok",command=lambda:win_popup.destroy())
+        win_popup.mainloop()
+
+        
+
 
     response.raise_for_status()
     return response.json()["table"]
@@ -212,7 +222,7 @@ def refresh_game():
     finally:
         # Schedule the next refresh after three seconds
         if app.winfo_exists():
-            app.after(3000, refresh_game)
+            app.after(1000, refresh_game)
 
 
 def add_sign(button, row, col):
